@@ -36,10 +36,4 @@ public class Pauta implements Serializable {
 
     @Column
     private long resultado;
-
-    @OneToOne(mappedBy = "pauta")
-    private SessaoVotacao sessaoVotacao;
-
-    @OneToMany(mappedBy = "pauta")
-    private Set<Voto> votos;
 }

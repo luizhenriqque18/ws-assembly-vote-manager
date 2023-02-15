@@ -1,9 +1,7 @@
 package br.com.lhos.wsassemblyvotemanager.exception;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -53,5 +51,62 @@ public class CustomRestExceptionHandler<T> {
         }
         response.setErrors(errors);
         return response;
+    }
+
+    /**
+     * Método que lida com uma @{@link SessaoVotacaoNaoExisteEx} e devolve um erro com
+     * status code = 404.
+     *
+     * @author Luiz Souza
+     * @since 15/02/2023
+     *
+     * @param exception
+     * @return ResponseEntity<Response<T>>
+     */
+    @ExceptionHandler(value = { SessaoVotacaoNaoExisteEx.class })
+    protected ResponseEntity<Response<T>> sessaoVotacaoNãoExisteEx(SessaoVotacaoNaoExisteEx exception) {
+
+        Response<T> response = new Response<>();
+        response.addErrorMsgToResponse(exception.getLocalizedMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * Método que lida com uma @{@link PautaNaoExisteEx} e devolve um erro com
+     * status code = 404.
+     *
+     * @author Luiz Souza
+     * @since 15/02/2023
+     *
+     * @param exception
+     * @return ResponseEntity<Response<T>>
+     */
+    @ExceptionHandler(value = { PautaNaoExisteEx.class })
+    protected ResponseEntity<Response<T>> pautaNãoExisteEx(PautaNaoExisteEx exception) {
+
+        Response<T> response = new Response<>();
+        response.addErrorMsgToResponse(exception.getLocalizedMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+
+    /**
+     * Método que lida com uma @{@link SessaoVotacaoEmProgressoEx} e devolve um erro com
+     * status code = 404.
+     *
+     * @author Luiz Souza
+     * @since 15/02/2023
+     *
+     * @param exception
+     * @return ResponseEntity<Response<T>>
+     */
+    @ExceptionHandler(value = { SessaoVotacaoEmProgressoEx.class })
+    protected ResponseEntity<Response<T>> pautaNãoExisteEx(SessaoVotacaoEmProgressoEx exception) {
+
+        Response<T> response = new Response<>();
+        response.addErrorMsgToResponse(exception.getLocalizedMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 }

@@ -2,7 +2,7 @@ package br.com.lhos.wsassemblyvotemanager.controller;
 
 import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
 import br.com.lhos.wsassemblyvotemanager.dto.PautaDTO;
-import br.com.lhos.wsassemblyvotemanager.service.pauta.PautaService;
+import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
-@RequestMapping("/ws-assembly-vote-manager/pauta")
+@RequestMapping("/pauta")
 public class PautaController{
 
     PautaService pautaService;

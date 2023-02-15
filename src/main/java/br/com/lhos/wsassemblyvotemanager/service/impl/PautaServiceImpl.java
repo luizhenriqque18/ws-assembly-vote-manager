@@ -1,8 +1,8 @@
-package br.com.lhos.wsassemblyvotemanager.service.pauta.impl;
+package br.com.lhos.wsassemblyvotemanager.service.impl;
 
 import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
 import br.com.lhos.wsassemblyvotemanager.repository.PautaRepository;
-import br.com.lhos.wsassemblyvotemanager.service.pauta.PautaService;
+import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
