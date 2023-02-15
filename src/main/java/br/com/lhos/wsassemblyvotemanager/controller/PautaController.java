@@ -2,6 +2,7 @@ package br.com.lhos.wsassemblyvotemanager.controller;
 
 import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
 import br.com.lhos.wsassemblyvotemanager.dto.PautaDTO;
+import br.com.lhos.wsassemblyvotemanager.exception.PautaNaoExisteEx;
 import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -13,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -35,26 +35,18 @@ public class PautaController{
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable("id") UUID id, @RequestBody @Valid PautaDTO pautaDTO) {
-        Optional<Pauta> pauta = pautaService.findById(id);
+    public ResponseEntity<Object> update(@PathVariable("id") UUID id, @RequestBody @Valid PautaDTO pautaDTO) throws PautaNaoExisteEx {
+        Pauta pauta = pautaService.findById(id);
 
-        if(!pauta.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pauta id " + id + " não existe.");
-        }
-
-        BeanUtils.copyProperties(pautaDTO, pauta.get());
-        return ResponseEntity.status(HttpStatus.OK).body(pautaService.save(pauta.get()));
+        BeanUtils.copyProperties(pautaDTO, pauta);
+        return ResponseEntity.status(HttpStatus.OK).body(pautaService.save(pauta));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Object> findById(@PathVariable(value = "id") UUID id) {
-        Optional<Pauta> pauta = pautaService.findById(id);
+    public ResponseEntity<Object> findById(@PathVariable(value = "id") UUID id) throws PautaNaoExisteEx {
+        Pauta pauta = pautaService.findById(id);
 
-        if(!pauta.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Pauta id " + id + " não existe.");
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body(pauta.get());
+        return ResponseEntity.status(HttpStatus.OK).body(pauta);
     }
 
     @GetMapping()
