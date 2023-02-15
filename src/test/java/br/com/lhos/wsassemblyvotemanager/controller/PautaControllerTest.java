@@ -2,6 +2,7 @@ package br.com.lhos.wsassemblyvotemanager.controller;
 
 import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
 import br.com.lhos.wsassemblyvotemanager.dto.PautaDTO;
+import br.com.lhos.wsassemblyvotemanager.exception.PautaNaoExisteEx;
 import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -50,7 +51,7 @@ class PautaControllerTest {
     static final String TITULO = "Assenbleia 0";
     static final String DESCRICAO = "Taxa de Juros veiculo";
     static final UUID PAUTA_ID = UUID.randomUUID();
-    static final String URL = "/ws-assembly-vote-manager/pauta";
+    static final String URL = "/pauta";
 
 
     HttpHeaders headers;
@@ -62,7 +63,7 @@ class PautaControllerTest {
     PautaService pautaService;
 
     @BeforeAll
-    private void setUp() {
+    private void setUp() throws PautaNaoExisteEx {
         headers = new HttpHeaders();
         headers.set("X-api-key", "FX001-ZBSY6YSLP");
 
@@ -73,15 +74,13 @@ class PautaControllerTest {
                 .countAprovados(0)
                 .countReprovados(0)
                 .resultado(0)
-                .sessaoVotacao(null)
-                .votos(null)
                 .build();
 
         List<Pauta> pautas = new ArrayList<>();
         pautas.add(pauta);
 
         BDDMockito.given(pautaService.save(Mockito.any(Pauta.class))).willReturn(pauta);
-        BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willReturn(Optional.of(pauta));
+        BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willReturn(pauta);
         BDDMockito.given(pautaService.findAll(Mockito.any(Pageable.class))).willReturn(new PageImpl<>(pautas));
     }
 
@@ -107,9 +106,7 @@ class PautaControllerTest {
                 .andExpect(jsonPath("$.descricao").value(DESCRICAO))
                 .andExpect(jsonPath("$.countAprovados").value(0))
                 .andExpect(jsonPath("$.countReprovados").value(0))
-                .andExpect(jsonPath("$.resultado").value(0))
-                .andExpect(jsonPath("$.sessaoVotacao").isEmpty())
-                .andExpect(jsonPath("$.votos").isEmpty());
+                .andExpect(jsonPath("$.resultado").value(0));
     }
 
     /**
@@ -151,9 +148,7 @@ class PautaControllerTest {
                 .andExpect(jsonPath("$.descricao").value(DESCRICAO))
                 .andExpect(jsonPath("$.countAprovados").value(0))
                 .andExpect(jsonPath("$.countReprovados").value(0))
-                .andExpect(jsonPath("$.resultado").value(0))
-                .andExpect(jsonPath("$.sessaoVotacao").isEmpty())
-                .andExpect(jsonPath("$.votos").isEmpty());
+                .andExpect(jsonPath("$.resultado").value(0));
     }
 
     /**
@@ -176,9 +171,7 @@ class PautaControllerTest {
                 .andExpect(jsonPath("$.descricao").value(DESCRICAO))
                 .andExpect(jsonPath("$.countAprovados").value(0))
                 .andExpect(jsonPath("$.countReprovados").value(0))
-                .andExpect(jsonPath("$.resultado").value(0))
-                .andExpect(jsonPath("$.sessaoVotacao").isEmpty())
-                .andExpect(jsonPath("$.votos").isEmpty());
+                .andExpect(jsonPath("$.resultado").value(0));
     }
 
     /**
@@ -192,13 +185,14 @@ class PautaControllerTest {
     @Test
     @Order(5)
     void testFindByIdInvalidPauta() throws Exception {
-        BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willReturn(Optional.empty());
+        PautaNaoExisteEx ex = new PautaNaoExisteEx("Pauta id " + PAUTA_ID + " não existe.");
+        BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willThrow(ex).willReturn(new Pauta());
 
         mockMvc.perform(MockMvcRequestBuilders.get(URL + "/{id}", PAUTA_ID)
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .headers(headers))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$").value("Pauta id " + PAUTA_ID + " não existe."));
+                .andExpect(jsonPath("$.errors.details").value("Pauta id " + PAUTA_ID + " não existe."));
     }
 
     /**
@@ -212,14 +206,14 @@ class PautaControllerTest {
     @Test
     @Order(6)
     void testUpdateInvalidPauta() throws Exception {
-
-        BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willReturn(Optional.empty());
+        PautaNaoExisteEx ex = new PautaNaoExisteEx("Pauta id " + PAUTA_ID + " não existe.");
+        BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willThrow(ex).willReturn(new Pauta());
 
         mockMvc.perform(MockMvcRequestBuilders.put(URL + "/{id}", PAUTA_ID).content(getJsonPayload(TITULO, DESCRICAO))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .headers(headers))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$").value("Pauta id " + PAUTA_ID + " não existe."));
+                .andExpect(jsonPath("$.errors.details").value("Pauta id " + PAUTA_ID + " não existe."));
     }
 
     /**
