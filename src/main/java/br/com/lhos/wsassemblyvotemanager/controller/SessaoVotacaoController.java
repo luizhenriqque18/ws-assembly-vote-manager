@@ -1,11 +1,9 @@
 package br.com.lhos.wsassemblyvotemanager.controller;
 
-import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
 import br.com.lhos.wsassemblyvotemanager.domain.SessaoVotacao;
 import br.com.lhos.wsassemblyvotemanager.dto.SessaoVotacaoDTO;
 import br.com.lhos.wsassemblyvotemanager.enumeration.SessaoVotacaoStatusEnum;
 import br.com.lhos.wsassemblyvotemanager.exception.PautaNaoExisteEx;
-import br.com.lhos.wsassemblyvotemanager.exception.SessaoVotacaoEmProgressoEx;
 import br.com.lhos.wsassemblyvotemanager.exception.SessaoVotacaoNaoExisteEx;
 import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import br.com.lhos.wsassemblyvotemanager.service.SessaoVotacaoService;
@@ -20,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -39,13 +36,9 @@ public class SessaoVotacaoController {
 
     @PostMapping()
     public ResponseEntity<SessaoVotacaoDTO> create(@Valid @RequestBody SessaoVotacaoDTO sessaoVotacaoDTO)
-            throws SessaoVotacaoNaoExisteEx {
+            throws PautaNaoExisteEx {
 
-        Optional<Pauta> pauta = pautaService.findById(sessaoVotacaoDTO.getPautaId());
-
-        if(!pauta.isPresent()) {
-            throw new SessaoVotacaoNaoExisteEx("Pauta id " + sessaoVotacaoDTO.getSessaoVotacaoId() + " não existe.");
-        }
+        pautaService.findById(sessaoVotacaoDTO.getPautaId());
 
         SessaoVotacao sessaoVotacao = sessaoVotacaoDTO.convertDTOToEntity();
         sessaoVotacao.setStatus(SessaoVotacaoStatusEnum.PENDING);
@@ -55,14 +48,10 @@ public class SessaoVotacaoController {
 
     @PutMapping(path = "/{id}")
     public ResponseEntity<Object> update(@PathVariable("id") UUID id, @Valid @RequestBody SessaoVotacaoDTO sessaoVotacaoDTO)
-            throws SessaoVotacaoNaoExisteEx, PautaNaoExisteEx, SessaoVotacaoEmProgressoEx {
+            throws SessaoVotacaoNaoExisteEx, PautaNaoExisteEx {
         sessaoVotacaoDTO.setSessaoVotacaoId(id);
 
-        Optional<Pauta> pauta = pautaService.findById(sessaoVotacaoDTO.getPautaId());
-
-        if(!pauta.isPresent()) {
-            throw new PautaNaoExisteEx("Pauta id " + sessaoVotacaoDTO.getSessaoVotacaoId() + " não existe.");
-        }
+        pautaService.findById(sessaoVotacaoDTO.getPautaId());
 
         SessaoVotacao findResult = sessaoVotacaoService.findById(sessaoVotacaoDTO.getSessaoVotacaoId());
 
