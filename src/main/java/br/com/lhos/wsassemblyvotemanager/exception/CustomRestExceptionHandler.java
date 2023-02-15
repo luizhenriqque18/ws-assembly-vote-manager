@@ -101,8 +101,8 @@ public class CustomRestExceptionHandler<T> {
      * @param exception
      * @return ResponseEntity<Response<T>>
      */
-    @ExceptionHandler(value = { SessaoVotacaoEmProgressoEx.class })
-    protected ResponseEntity<Response<T>> pautaNãoExisteEx(SessaoVotacaoEmProgressoEx exception) {
+    @ExceptionHandler(value = { SessaoVotacaoEmProgressoEx.class, AssociadoNaoExisteEx.class})
+    protected ResponseEntity<Response<T>> pautaNãoExisteEx(Exception exception) {
 
         Response<T> response = new Response<>();
         response.addErrorMsgToResponse(exception.getLocalizedMessage());
