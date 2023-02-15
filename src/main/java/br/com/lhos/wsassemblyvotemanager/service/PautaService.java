@@ -1,4 +1,4 @@
-package br.com.lhos.wsassemblyvotemanager.service.pauta;
+package br.com.lhos.wsassemblyvotemanager.service;
 
 import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
 import org.springframework.data.domain.Page;

@@ -1,16 +1,18 @@
 package br.com.lhos.wsassemblyvotemanager.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 
 
 @Getter
 @Setter
 @Builder
-public class PautaDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class PautaDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
     @NotBlank
     private String titulo;
 

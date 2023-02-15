@@ -2,7 +2,7 @@ package br.com.lhos.wsassemblyvotemanager.controller;
 
 import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
 import br.com.lhos.wsassemblyvotemanager.dto.PautaDTO;
-import br.com.lhos.wsassemblyvotemanager.service.pauta.PautaService;
+import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;

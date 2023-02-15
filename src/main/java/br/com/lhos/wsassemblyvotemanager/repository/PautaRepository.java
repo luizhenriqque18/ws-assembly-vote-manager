@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface PautaRepository extends JpaRepository<Pauta, UUID> {
 
-    public Optional<Pauta> findByPautaId(UUID uuid);
+    Optional<Pauta> findByPautaId(UUID uuid);
 }
