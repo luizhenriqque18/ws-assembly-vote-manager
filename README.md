@@ -139,22 +139,18 @@ or
 mvn spring-boot:run -Dspring.profiles.active=dev
 ```
 
+* **Docker-compose**
+
+Inicializar Container
+
+```bash
+docker-compose up -d
+```
+
 * **Dockerhub**
 
 ```bash
 docker run --rm -p 8082:8082 -e "JAVA_OPTS=-Dspring.profiles.active=dev" luiz0s/ws-assembly-vote-manager:latest --server.port=8082
-```
-
-* **Dockerfile**
-
-Build Image
-```bash
-docker build -t luizhenriqque18/ws-assembly-vote-manager:latest .
-```
-
-Run Image
-```bash
- docker run --rm -p 8082:8082 -e "JAVA_OPTS=-Dspring.profiles.active=test" luizhenriqque18/apimc:latest --server.port=8082
 ```
 
 Por padrão, a API estará disponível em [http://localhost:8082/ws-assembly-vote-manager](http://localhost:8082/ws-assembly-vote-manager)
