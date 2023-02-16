@@ -1,6 +1,8 @@
 package br.com.lhos.wsassemblyvotemanager.domain;
 
+import br.com.lhos.wsassemblyvotemanager.dto.PautaDTO;
 import lombok.*;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -35,4 +37,20 @@ public class Pauta implements Serializable {
 
     @Column
     private long resultado;
+
+    @OneToOne
+    @JoinColumn(name = "sessao_votacao_id", unique = true)
+    private SessaoVotacao sessaoVotacao;
+
+    /**
+     * Método para converter uma entidade @{@link Pauta} para uma @{@link PautaDTO}.
+     *
+     * @author Luiz Souza
+     * @since 14/02/2023
+     *
+     * @return a <code>PautaDTO</code> object
+     */
+    public PautaDTO convertEntityToDTO() {
+        return new ModelMapper().map(this, PautaDTO.class);
+    }
 }

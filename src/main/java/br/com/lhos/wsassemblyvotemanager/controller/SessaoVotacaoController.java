@@ -27,19 +27,12 @@ public class SessaoVotacaoController {
 
     SessaoVotacaoService sessaoVotacaoService;
 
-    PautaService pautaService;
-
-    public SessaoVotacaoController(SessaoVotacaoService sessaoVotacaoService, PautaService pautaService) {
+    public SessaoVotacaoController(SessaoVotacaoService sessaoVotacaoService) {
         this.sessaoVotacaoService = sessaoVotacaoService;
-        this.pautaService = pautaService;
     }
 
     @PostMapping()
-    public ResponseEntity<SessaoVotacaoDTO> create(@Valid @RequestBody SessaoVotacaoDTO sessaoVotacaoDTO)
-            throws PautaNaoExisteEx {
-
-        pautaService.findById(sessaoVotacaoDTO.getPautaId());
-
+    public ResponseEntity<SessaoVotacaoDTO> create(@Valid @RequestBody SessaoVotacaoDTO sessaoVotacaoDTO) {
         SessaoVotacao sessaoVotacao = sessaoVotacaoDTO.convertDTOToEntity();
         sessaoVotacao.setStatus(SessaoVotacaoStatusEnum.PENDING);
 
@@ -50,8 +43,6 @@ public class SessaoVotacaoController {
     public ResponseEntity<Object> update(@PathVariable("id") UUID id, @Valid @RequestBody SessaoVotacaoDTO sessaoVotacaoDTO)
             throws SessaoVotacaoNaoExisteEx, PautaNaoExisteEx {
         sessaoVotacaoDTO.setSessaoVotacaoId(id);
-
-        pautaService.findById(sessaoVotacaoDTO.getPautaId());
 
         SessaoVotacao findResult = sessaoVotacaoService.findById(sessaoVotacaoDTO.getSessaoVotacaoId());
 
