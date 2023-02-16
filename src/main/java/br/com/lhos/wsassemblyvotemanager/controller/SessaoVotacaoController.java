@@ -5,7 +5,6 @@ import br.com.lhos.wsassemblyvotemanager.dto.SessaoVotacaoDTO;
 import br.com.lhos.wsassemblyvotemanager.enumeration.SessaoVotacaoStatusEnum;
 import br.com.lhos.wsassemblyvotemanager.exception.PautaNaoExisteEx;
 import br.com.lhos.wsassemblyvotemanager.exception.SessaoVotacaoNaoExisteEx;
-import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import br.com.lhos.wsassemblyvotemanager.service.SessaoVotacaoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -50,7 +49,16 @@ public class SessaoVotacaoController {
 
         if(findResult.getStatus() == SessaoVotacaoStatusEnum.PENDING) {
             if(sessaoVotacao.getStatus() == SessaoVotacaoStatusEnum.OPEN) {
-                sessaoVotacao.setInicioSessao(LocalDateTime.now());
+                LocalDateTime inicioSessao = LocalDateTime.now();
+                LocalDateTime tempoSessao = LocalDateTime.of(inicioSessao.toLocalDate(), sessaoVotacao.getDuracao());
+
+                LocalDateTime encerraSessao = inicioSessao;
+                encerraSessao = encerraSessao.plusHours(tempoSessao.getHour())
+                        .plusMinutes(tempoSessao.getMinute())
+                        .plusSeconds(tempoSessao.getSecond());
+
+                sessaoVotacao.setInicioSessao(inicioSessao);
+                sessaoVotacao.setEncerraSessao(encerraSessao);
                 sessaoVotacao.setStatus(SessaoVotacaoStatusEnum.OPEN);
             }
         } else {
