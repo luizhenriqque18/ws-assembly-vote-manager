@@ -1,13 +1,10 @@
 package br.com.lhos.wsassemblyvotemanager.dto;
 
 import br.com.lhos.wsassemblyvotemanager.domain.SessaoVotacao;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.Column;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
@@ -33,11 +30,9 @@ public class SessaoVotacaoDTO {
             message="Para o status só são aceitos os valores PENDING, OPEN, CLOSED ou CANCELED.")
     private String status;
 
-    private LocalDateTime InicioSessao;
+    private LocalDateTime inicioSessao;
 
-    private LocalDateTime fimSessao;
-
-    private UUID pautaId;
+    private LocalDateTime encerraSessao;
 
 
     /**

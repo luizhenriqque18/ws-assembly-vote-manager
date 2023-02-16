@@ -2,9 +2,7 @@ package br.com.lhos.wsassemblyvotemanager.domain;
 
 import br.com.lhos.wsassemblyvotemanager.dto.SessaoVotacaoDTO;
 import br.com.lhos.wsassemblyvotemanager.enumeration.SessaoVotacaoStatusEnum;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
@@ -16,9 +14,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "TB_SESSAO_VOTACAO")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class SessaoVotacao implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -34,17 +34,13 @@ public class SessaoVotacao implements Serializable {
     private LocalTime duracao;
 
     @Column
-    private LocalDateTime InicioSessao;
+    private LocalDateTime inicioSessao;
 
     @Column
-    private LocalDateTime fimSessao;
+    private LocalDateTime encerraSessao;
 
     @Enumerated(EnumType.STRING)
     private SessaoVotacaoStatusEnum status;
-
-    @OneToOne
-    @JoinColumn(name = "pauta_id", unique = true)
-    private Pauta pauta;
 
     /**
      * Método para converter um @{@link SessaoVotacaoDTO} para uma entidade de @{@link SessaoVotacao}.

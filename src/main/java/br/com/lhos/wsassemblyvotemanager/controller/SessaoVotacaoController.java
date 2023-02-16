@@ -5,7 +5,6 @@ import br.com.lhos.wsassemblyvotemanager.dto.SessaoVotacaoDTO;
 import br.com.lhos.wsassemblyvotemanager.enumeration.SessaoVotacaoStatusEnum;
 import br.com.lhos.wsassemblyvotemanager.exception.PautaNaoExisteEx;
 import br.com.lhos.wsassemblyvotemanager.exception.SessaoVotacaoNaoExisteEx;
-import br.com.lhos.wsassemblyvotemanager.service.PautaService;
 import br.com.lhos.wsassemblyvotemanager.service.SessaoVotacaoService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
@@ -27,19 +26,12 @@ public class SessaoVotacaoController {
 
     SessaoVotacaoService sessaoVotacaoService;
 
-    PautaService pautaService;
-
-    public SessaoVotacaoController(SessaoVotacaoService sessaoVotacaoService, PautaService pautaService) {
+    public SessaoVotacaoController(SessaoVotacaoService sessaoVotacaoService) {
         this.sessaoVotacaoService = sessaoVotacaoService;
-        this.pautaService = pautaService;
     }
 
     @PostMapping()
-    public ResponseEntity<SessaoVotacaoDTO> create(@Valid @RequestBody SessaoVotacaoDTO sessaoVotacaoDTO)
-            throws PautaNaoExisteEx {
-
-        pautaService.findById(sessaoVotacaoDTO.getPautaId());
-
+    public ResponseEntity<SessaoVotacaoDTO> create(@Valid @RequestBody SessaoVotacaoDTO sessaoVotacaoDTO) {
         SessaoVotacao sessaoVotacao = sessaoVotacaoDTO.convertDTOToEntity();
         sessaoVotacao.setStatus(SessaoVotacaoStatusEnum.PENDING);
 
@@ -51,15 +43,22 @@ public class SessaoVotacaoController {
             throws SessaoVotacaoNaoExisteEx, PautaNaoExisteEx {
         sessaoVotacaoDTO.setSessaoVotacaoId(id);
 
-        pautaService.findById(sessaoVotacaoDTO.getPautaId());
-
         SessaoVotacao findResult = sessaoVotacaoService.findById(sessaoVotacaoDTO.getSessaoVotacaoId());
 
         SessaoVotacao sessaoVotacao = sessaoVotacaoDTO.convertDTOToEntity();
 
         if(findResult.getStatus() == SessaoVotacaoStatusEnum.PENDING) {
             if(sessaoVotacao.getStatus() == SessaoVotacaoStatusEnum.OPEN) {
-                sessaoVotacao.setInicioSessao(LocalDateTime.now());
+                LocalDateTime inicioSessao = LocalDateTime.now();
+                LocalDateTime tempoSessao = LocalDateTime.of(inicioSessao.toLocalDate(), sessaoVotacao.getDuracao());
+
+                LocalDateTime encerraSessao = inicioSessao;
+                encerraSessao = encerraSessao.plusHours(tempoSessao.getHour())
+                        .plusMinutes(tempoSessao.getMinute())
+                        .plusSeconds(tempoSessao.getSecond());
+
+                sessaoVotacao.setInicioSessao(inicioSessao);
+                sessaoVotacao.setEncerraSessao(encerraSessao);
                 sessaoVotacao.setStatus(SessaoVotacaoStatusEnum.OPEN);
             }
         } else {

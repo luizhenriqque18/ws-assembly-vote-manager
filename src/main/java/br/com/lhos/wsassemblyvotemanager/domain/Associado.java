@@ -1,12 +1,13 @@
 package br.com.lhos.wsassemblyvotemanager.domain;
 
+import br.com.lhos.wsassemblyvotemanager.dto.AssociadoDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.modelmapper.ModelMapper;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -18,15 +19,24 @@ public class Associado implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "uuid")
     private UUID associadoId;
 
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String cpf;
 
-    @OneToMany(mappedBy = "associado")
-    private Set<Voto> votos;
-
+    /**
+     * Método para converter um @{@link Associado} para uma entidade de @{@link AssociadoDTO}.
+     *
+     * @author Luiz Souza
+     * @since 15/02/2023
+     *
+     * @return a <code>AssociadoDTO</code> object
+     */
+    public AssociadoDTO convertEntityToDTO() {
+        return new ModelMapper().map(this, AssociadoDTO.class);
+    }
 }

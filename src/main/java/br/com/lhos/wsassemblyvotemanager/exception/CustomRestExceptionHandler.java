@@ -64,7 +64,7 @@ public class CustomRestExceptionHandler<T> {
      * @return ResponseEntity<Response<T>>
      */
     @ExceptionHandler(value = { SessaoVotacaoNaoExisteEx.class })
-    protected ResponseEntity<Response<T>> sessaoVotacaoNãoExisteEx(SessaoVotacaoNaoExisteEx exception) {
+    protected ResponseEntity<Response<T>> sessaoVotacaoNaoExisteEx(SessaoVotacaoNaoExisteEx exception) {
 
         Response<T> response = new Response<>();
         response.addErrorMsgToResponse(exception.getLocalizedMessage());
@@ -83,7 +83,7 @@ public class CustomRestExceptionHandler<T> {
      * @return ResponseEntity<Response<T>>
      */
     @ExceptionHandler(value = { PautaNaoExisteEx.class })
-    protected ResponseEntity<Response<T>> pautaNãoExisteEx(PautaNaoExisteEx exception) {
+    protected ResponseEntity<Response<T>> pautaNaoExisteEx(PautaNaoExisteEx exception) {
 
         Response<T> response = new Response<>();
         response.addErrorMsgToResponse(exception.getLocalizedMessage());
@@ -101,8 +101,8 @@ public class CustomRestExceptionHandler<T> {
      * @param exception
      * @return ResponseEntity<Response<T>>
      */
-    @ExceptionHandler(value = { SessaoVotacaoEmProgressoEx.class })
-    protected ResponseEntity<Response<T>> pautaNãoExisteEx(SessaoVotacaoEmProgressoEx exception) {
+    @ExceptionHandler(value = { SessaoVotacaoEmProgressoEx.class, AssociadoNaoExisteEx.class, VotoEncerradoEx.class, VotoJaRegistradoEx.class})
+    protected ResponseEntity<Response<T>> pautaNaoExisteEx(Exception exception) {
 
         Response<T> response = new Response<>();
         response.addErrorMsgToResponse(exception.getLocalizedMessage());
