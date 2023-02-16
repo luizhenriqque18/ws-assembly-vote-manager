@@ -1,9 +1,12 @@
 package br.com.lhos.wsassemblyvotemanager.controller;
 
 import br.com.lhos.wsassemblyvotemanager.domain.Pauta;
+import br.com.lhos.wsassemblyvotemanager.domain.SessaoVotacao;
 import br.com.lhos.wsassemblyvotemanager.dto.PautaDTO;
 import br.com.lhos.wsassemblyvotemanager.exception.PautaNaoExisteEx;
+import br.com.lhos.wsassemblyvotemanager.exception.SessaoVotacaoNaoExisteEx;
 import br.com.lhos.wsassemblyvotemanager.service.PautaService;
+import br.com.lhos.wsassemblyvotemanager.service.SessaoVotacaoService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -51,6 +54,8 @@ class PautaControllerTest {
     static final String TITULO = "Assenbleia 0";
     static final String DESCRICAO = "Taxa de Juros veiculo";
     static final UUID PAUTA_ID = UUID.randomUUID();
+
+    static final UUID SESSAO_VOTACAO_ID = UUID.randomUUID();
     static final String URL = "/pauta";
 
 
@@ -62,10 +67,15 @@ class PautaControllerTest {
     @MockBean
     PautaService pautaService;
 
+    @MockBean
+    SessaoVotacaoService sessaoVotacaoService;
+
     @BeforeAll
-    private void setUp() throws PautaNaoExisteEx {
+    private void setUp() throws PautaNaoExisteEx, SessaoVotacaoNaoExisteEx {
         headers = new HttpHeaders();
         headers.set("X-api-key", "FX001-ZBSY6YSLP");
+
+        SessaoVotacao sessaoVotacao = SessaoVotacao.builder().sessaoVotacaoId(SESSAO_VOTACAO_ID).build();
 
         Pauta pauta = Pauta.builder()
                 .pautaId(PAUTA_ID)
@@ -74,11 +84,13 @@ class PautaControllerTest {
                 .countAprovados(0)
                 .countReprovados(0)
                 .resultado(0)
+                .sessaoVotacao(sessaoVotacao)
                 .build();
 
         List<Pauta> pautas = new ArrayList<>();
         pautas.add(pauta);
 
+        BDDMockito.given(sessaoVotacaoService.findById(Mockito.any(UUID.class))).willReturn(sessaoVotacao);
         BDDMockito.given(pautaService.save(Mockito.any(Pauta.class))).willReturn(pauta);
         BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willReturn(pauta);
         BDDMockito.given(pautaService.findAll(Mockito.any(Pageable.class))).willReturn(new PageImpl<>(pautas));
@@ -96,7 +108,7 @@ class PautaControllerTest {
     @Order(1)
     void testSave() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.post(URL).content(getJsonPayload(TITULO, DESCRICAO))
+        mockMvc.perform(MockMvcRequestBuilders.post(URL).content(getJsonPayload(TITULO, DESCRICAO, SESSAO_VOTACAO_ID))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .headers(headers))
                 .andDo(MockMvcResultHandlers.print())
@@ -104,9 +116,7 @@ class PautaControllerTest {
                 .andExpect(jsonPath("$.pautaId").value(PAUTA_ID.toString()))
                 .andExpect(jsonPath("$.titulo").value(TITULO))
                 .andExpect(jsonPath("$.descricao").value(DESCRICAO))
-                .andExpect(jsonPath("$.countAprovados").value(0))
-                .andExpect(jsonPath("$.countReprovados").value(0))
-                .andExpect(jsonPath("$.resultado").value(0));
+                .andExpect(jsonPath("$.sessaoVotacaoId").value(SESSAO_VOTACAO_ID.toString()));
     }
 
     /**
@@ -120,7 +130,7 @@ class PautaControllerTest {
     @Test
     @Order(2)
     void testSaveInvalidPauta() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.post(URL).content(getJsonPayload(null, null))
+        mockMvc.perform(MockMvcRequestBuilders.post(URL).content(getJsonPayload(null, null, null))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .headers(headers))
                 .andExpect(status().isBadRequest())
@@ -139,16 +149,14 @@ class PautaControllerTest {
     @Test
     @Order(3)
     void testUpdatePauta() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.put(URL + "/{id}", PAUTA_ID).content(getJsonPayload(TITULO, DESCRICAO))
+        mockMvc.perform(MockMvcRequestBuilders.put(URL + "/{id}", PAUTA_ID).content(getJsonPayload(TITULO, DESCRICAO, SESSAO_VOTACAO_ID))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .headers(headers))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pautaId").value(PAUTA_ID.toString()))
                 .andExpect(jsonPath("$.titulo").value(TITULO))
                 .andExpect(jsonPath("$.descricao").value(DESCRICAO))
-                .andExpect(jsonPath("$.countAprovados").value(0))
-                .andExpect(jsonPath("$.countReprovados").value(0))
-                .andExpect(jsonPath("$.resultado").value(0));
+                .andExpect(jsonPath("$.sessaoVotacaoId").value(SESSAO_VOTACAO_ID.toString()));
     }
 
     /**
@@ -209,7 +217,7 @@ class PautaControllerTest {
         PautaNaoExisteEx ex = new PautaNaoExisteEx("Pauta id " + PAUTA_ID + " não existe.");
         BDDMockito.given(pautaService.findById(Mockito.any(UUID.class))).willThrow(ex).willReturn(new Pauta());
 
-        mockMvc.perform(MockMvcRequestBuilders.put(URL + "/{id}", PAUTA_ID).content(getJsonPayload(TITULO, DESCRICAO))
+        mockMvc.perform(MockMvcRequestBuilders.put(URL + "/{id}", PAUTA_ID).content(getJsonPayload(TITULO, DESCRICAO, SESSAO_VOTACAO_ID))
                         .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
                         .headers(headers))
                 .andExpect(status().isNotFound())
@@ -248,9 +256,9 @@ class PautaControllerTest {
      *
      * @throws JsonProcessingException
      */
-    private String getJsonPayload(String titulo, String descricao) throws JsonProcessingException {
+    private String getJsonPayload(String titulo, String descricao, UUID sessaoVotacaoId) throws JsonProcessingException {
 
-        PautaDTO dto = PautaDTO.builder().titulo(titulo).descricao(descricao).build();
+        PautaDTO dto = PautaDTO.builder().titulo(titulo).descricao(descricao).sessaoVotacaoId(sessaoVotacaoId).build();
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
