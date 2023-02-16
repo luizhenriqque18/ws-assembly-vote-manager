@@ -101,7 +101,7 @@ Este projeto foi desenvolvido com:
 * **PostgreSQL 13**
 * **Flyway**
 * **H2**
-* **AWS — Elastic Beanstalk** [Endereço de Acesso]()
+* **AWS — Elastic Beanstalk** [Endereço de Acesso](http://ws-assembly-vote-manager.eba-9q7mtrwr.us-east-1.elasticbeanstalk.com/ws-assembly-vote-manager)
 
 ### Compilação e empacotamento
 

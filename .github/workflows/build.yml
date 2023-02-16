@@ -86,7 +86,7 @@ jobs:
 
   #Build's job
   build:
-    if: ${{ false }}  # disable for now
+    #if: ${{ false }}  # disable for now
     #Depends on sonar's job
     needs: sonar
     name: Build
@@ -137,7 +137,7 @@ jobs:
   #Deploy's job
   deploy:
     #Depends on build's job
-    if: ${{ false }}  # disable for now
+    #if: ${{ false }}  # disable for now
     needs: build
     name: Deploy
     #Run on Ubuntu using the latest version
