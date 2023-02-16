@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ws_avm
+    ports:
+       - "5432:5432"
+
+  application-ws:
+    build: .
+    environment:
+      JAVA_OPTS: "
+      -Dspring.datasource.url=jdbc:postgresql://db:5432/ws_avm 
+      -Dspring.datasource.username=postgres 
+      -Dspring.datasource.password=postgres 
+      -Dserver.port=8080"
+    ports:
+      - "8082:8080"
+    depends_on:
+      - db
