@@ -53,9 +53,26 @@ Este end-point é chamado para criar uma Pauta.
 
 ```json
 {
-  "titulo": "Prestação de conta", 
-  "descricao": "Prestação de conta (março de 2019)",
-  "sessaoVotacaoId": "53179d68-b26d-4a23-a3da-da0181fd8c55"
+  "titulo": "Troca de cadeiras 1",
+  "descricao": "Já",
+  "sessaoVotacaoId": "2053d1e8-225a-46b5-bbab-fa4d175c809a"
+}
+```
+
+#### Sessão Votação
+
+- `PUT/ws-assembly-vote-manager/sessao-votacao`
+
+Este end-point é chamado para atualizar uma Sessão Votação, end-point também usado para mudar a duração da sessão e inicializar a mesma com o status `OPEN`.
+
+**Body:**
+
+```json
+{
+  "titulo": "Assembleia 1",
+  "duracao": "00:00:20",
+  "status": "OPEN",
+  "pautaId": "f82293f9-ed93-45f0-8473-c2e13f9eb9e3"
 }
 ```
 
@@ -70,7 +87,7 @@ Este end-point é chamado para criar um Voto, será permitido um voto por associ
 ```json
 {
   "pautaId": "f82293f9-ed93-45f0-8473-c2e13f9eb9e3",
-  "associadoId": "750d929d-1927-4da8-9d67-d5ef46270265",
+  "associadoId": "acf5286f-14f2-4503-b9d0-5b36c89262a4",
   "situacao": "SIM"
 }
 ```

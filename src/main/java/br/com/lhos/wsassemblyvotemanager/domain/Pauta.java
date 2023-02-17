@@ -10,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "TB_PAUTA")
+@EntityListeners(PautaListener.class)
 @Builder
 @Getter
 @Setter
