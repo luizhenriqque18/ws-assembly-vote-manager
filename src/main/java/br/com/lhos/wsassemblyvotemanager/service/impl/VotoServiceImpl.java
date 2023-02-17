@@ -6,6 +6,7 @@ import br.com.lhos.wsassemblyvotemanager.exception.SessaoVotacaoNaoExisteEx;
 import br.com.lhos.wsassemblyvotemanager.exception.VotoJaRegistradoEx;
 import br.com.lhos.wsassemblyvotemanager.repository.VotoRepositoy;
 import br.com.lhos.wsassemblyvotemanager.service.VotoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,6 +17,7 @@ public class VotoServiceImpl implements VotoService {
 
     VotoRepositoy votoRepositoy;
 
+    @Autowired
     public VotoServiceImpl(VotoRepositoy votoRepositoy) {
         this.votoRepositoy = votoRepositoy;
     }

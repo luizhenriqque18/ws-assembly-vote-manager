@@ -46,20 +46,9 @@ public class VotoController {
         Pauta pauta =  pautaService.findById(votoDTO.getPautaId());
         associadoService.findById(votoDTO.getAssociadoId());
 
-        SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
-
-        if(LocalDateTime.now().isAfter(sessaoVotacao.getEncerraSessao())){
-            pauta.setCountAprovados(votoService.countVotosLike(pauta.getPautaId(), VotoSituacaoEnum.SIM));
-            pauta.setCountReprovados(votoService.countVotosLike(pauta.getPautaId(), VotoSituacaoEnum.NAO));
-            pautaService.save(pauta);
-
-            sessaoVotacao.setStatus(SessaoVotacaoStatusEnum.CLOSED);
-            sessaoVotacao = sessaoVotacaoService.save(sessaoVotacao);
-
-        }
-
         votoService.existAssociado(votoDTO.getAssociadoId());
 
+        SessaoVotacao sessaoVotacao = pauta.getSessaoVotacao();
         if (sessaoVotacao.getStatus() == SessaoVotacaoStatusEnum.CLOSED ||
                 sessaoVotacao.getStatus() == SessaoVotacaoStatusEnum.CANCELED) {
             throw new VotoEncerradoEx("Votação já encerada");
